@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سرور | SROUR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .logo {
+            width: 100px;
+            border-radius: 25%;
+            margin-top: 20px;
+        }
+        .rating, .downloads, .age {
+            display: inline-block;
+            margin: 10px;
+            font-size: 18px;
+        }
+        .button {
+    display: inline-block;
+    background-color: #0f9d58;
+    color: white;
+    padding: 10px 20px;
+    margin: 20px 0;
+    text-decoration: none;
+    border-radius: 25px;
+    width: 200px;
+    transition: background-color 0.3s ease;
+    text-align: center; /* تأكد من محاذاة النص في المركز */
+    font-size: 16px; /* ضبط حجم الخط ليتطابق مع الحجم المطلوب */
+}
+
+.button.loading {
+    background-color: #0f9d58; /* لون الخلفية عند التحميل */
+    cursor: not-allowed;
+}
+
+.button.loading::after {
+    content: ' تحميل...';
+    display: inline-block; /* لضمان تكرار حجم الزر بشكل صحيح */
+    width: 100%; /* تأكد من أن النص يمتد على عرض الزر */
+    text-align: center; /* محاذاة النص في المركز */
+}
+
+        .images {
+            display: flex;
+            justify-content: space-between;
+            padding: 0;
+            margin: 0;
+            overflow-x: auto;
+            gap: 20px;
+        }
+        .images img {
+            width: 150px;
+            border-radius: 20px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .text-start {
+            text-align: start;
+            font-weight: normal;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.95);
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 20px;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        /* New styles for rating section */
+        .rating-header {
+            text-align: center;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .star {
+            font-size: 30px;
+            color: gray;
+        }
+        .star.selected {
+            color: #0f9d58; /* لون الأخضر للتقييم */
+        }
+        .review-section {
+            margin-top: 40px;
+        }
+        .review-header {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .review-text {
+            margin: 10px 0;
+            font-size: 14px;
+            color: #555;
+        }
+        .ratings {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .rating-bar {
+            flex: 1;
+            height: 10px;
+            background-color: #e0e0e0;
+            margin-left: 10px;
+            position: relative;
+            border-radius: 50px; /* زوايا دائرية */
+        }
+        .rating-bar div {
+            height: 100%;
+            background-color: #0f9d58; /* لون الأخضر لشريط التقييم */
+            width: 40%;
+            border-radius: 50px; /* زوايا دائرية */
+        }
+        .rating-number {
+            width: 20px;
+        }
+        .average-rating {
+            font-size: 36px;
+            font-weight: bold;
+            margin-left: 20px;
+            color: #0f9d58; /* لون الأخضر لتقييم المتوسط */
+        }
+        .stars-average {
+            color: #0f9d58; /* لون الأخضر للنجمات */
+        }
+        /* Add space at the bottom */
+        .footer-space {
+            height: 45px; /* ارتفاع المسافة الفارغة */
+        }
+        .footer-text {
+            background-color: #f0f0f0; /* لون خلفية النص */
+            padding: 10px;
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="https://i.postimg.cc/j53SCf5V/appstore.jpg" alt="SROUR Logo" class="logo">
+    <h1>سرور | SROUR</h1>
+    <p>Programmer Omar Ahmed Obaid</p>
+
+    <a href="#" id="installButton" class="button">تثبيت</a>
+
+    <h3 class="text-start">صور داخل التطبيق ></h3>
+
+    <div class="images">
+        <img src="https://i.postimg.cc/TYt3yB7V/Picsart-24-08-17-21-33-08-594.jpg" alt="App Screenshot 1" onclick="openModal(this.src, 0)">
+        <img src="https://i.postimg.cc/wvDB7vZM/Picsart-24-08-17-21-34-19-131.jpg" alt="App Screenshot 2" onclick="openModal(this.src, 1)">
+        <img src="https://i.postimg.cc/vHYmZGz8/Picsart-24-08-17-21-34-05-654.jpg" alt="App Screenshot 3" onclick="openModal(this.src, 2)">
+        <img src="https://i.postimg.cc/PJ4rQ7tk/Picsart-24-08-17-21-33-38-119.jpg" alt="App Screenshot 4" onclick="openModal(this.src, 3)">
+        <img src="https://i.postimg.cc/FFgRvY0n/Picsart-24-08-17-21-33-50-082.jpg" alt="App Screenshot 5" onclick="openModal(this.src, 4)">
+    </div>
+
+    <!-- Rating Section -->
+    <div class="rating-header">
+        <h2>تقييم هذا التطبيق</h2>
+        <p>إخبار الآخرين برأيك</p>
+        <div class="stars" id="starContainer">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+        </div>
+    </div>
+
+    <div class="review-section">
+        <h3 class="review-header">التقييمات</h3>
+        <p class="review-text">يتم التحقق من التقييمات والمراجعات كما أنها تصدر عن أشخاص يستخدمون نوع الجهاز ذاته الذي تستخدمه.</p>
+        
+        <div class="ratings">
+            <div class="average-rating" id="averageRating">1</div>
+            <div class="stars-average"></div>
+        </div>
+
+        <div class="ratings">
+            <div class="rating-number">5</div>
+            <div class="rating-bar"><div style="width: 35%;"></div></div>
+        </div>
+        <div class="ratings">
+            <div class="rating-number">4</div>
+            <div class="rating-bar"><div style="width: 15%;"></div></div>
+        </div>
+        <div class="ratings">
+            <div class="rating-number">3</div>
+            <div class="rating-bar"><div style="width: 10%;"></div></div>
+        </div>
+        <div class="ratings">
+            <div class="rating-number">2</div>
+            <div class="rating-bar"><div style="width: 5%;"></div></div>
+        </div>
+        <div class="ratings">
+            <div class="rating-number">1</div>
+            <div class="rating-bar"><div style="width: 2%;"></div></div>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <!-- Footer Space -->
+    <div class="footer-space"></div>
+    <div class="footer-text">
+        شركة حلاوة سرور الشامية الاصلية ® 
+    </div>
+
+    <script>
+        var images = document.querySelectorAll('.images img');
+        var currentIndex = 0;
+
+        function openModal(src, index) {
+            var modal = document.getElementById("myModal");
+            var modalImage = document.getElementById("modalImage");
+            modal.style.display = "flex";
+            modalImage.src = src;
+            currentIndex = index;
+            modal.addEventListener('touchstart', handleTouchStart, false);
+            modal.addEventListener('touchend', handleTouchEnd, false);
+        }
+
+        function closeModal() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+            modal.removeEventListener('touchstart', handleTouchStart, false);
+            modal.removeEventListener('touchend', handleTouchEnd, false);
+        }
+
+        function handleTouchStart(e) {
+            this.touchStartX = e.touches[0].clientX;
+        }
+
+        function handleTouchEnd(e) {
+            this.touchEndX = e.changedTouches[0].clientX;
+            var threshold = 50;
+
+            if (this.touchEndX < this.touchStartX - threshold) {
+                showNextImage();
+            } else if (this.touchEndX > this.touchStartX + threshold) {
+                showPreviousImage();
+            }
+        }
+
+        function showNextImage() {
+            if (currentIndex < images.length - 1) {
+                currentIndex++;
+                var nextImage = images[currentIndex];
+                var modalImage = document.getElementById("modalImage");
+                modalImage.src = nextImage.src;
+            }
+        }
+
+        function showPreviousImage() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                var previousImage = images[currentIndex];
+                var modalImage = document.getElementById("modalImage");
+                modalImage.src = previousImage.src;
+            }
+        }
+
+        document.getElementById('installButton').addEventListener('click', function() {
+            var button = this;
+            button.classList.add('loading');
+            button.textContent = ''; // إخفاء النص الأصلي
+
+            // محاكاة عملية تحميل
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.textContent = 'تم بدأ التحميل'; // تغيير النص بعد انتهاء التحميل
+
+                // تحميل الملف بعد تغيير النص
+                var fileUrl = 'https://p-def5.pcloud.com/cBZjWTo3NZdf3Jc87ZvT097ZZV3VekkZ2ZZRnJZkZgyo2kZbQZAHZyQZtzZPQZ0RZ9LZmzZQpZ1zZr4ZFpZpLZI4ZbguE0ZPlsQ5qQ2kOuVPxyP83G3mRSD7Vb7/SROUR.apk';
+                var link = document.createElement('a');
+                link.href = fileUrl;
+                link.download = 'SROUR.apk';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            }, 2000); // 2000 ميلي ثانية = 2 ثانية
+        });
+
+        // Rating JavaScript
+        const stars = document.querySelectorAll('.star');
+        const averageRating = document.getElementById('averageRating');
+
+        // Load saved rating from localStorage
+        const savedRating = localStorage.getItem('userRating');
+        if (savedRating) {
+            updateStars(savedRating);
+            averageRating.textContent = savedRating;
+        }
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = star.dataset.value;
+                // Save rating to localStorage
+                localStorage.setItem('userRating', rating);
+                // Update stars and average rating
+                updateStars(rating);
+                averageRating.textContent = rating;
+            });
+        });
+
+        function updateStars(rating) {
+            // Remove 'selected' class from all stars
+            stars.forEach(s => s.classList.remove('selected'));
+            // Add 'selected' class to clicked star and all before it
+            for (let i = 0; i < rating; i++) {
+                stars[i].classList.add('selected');
+            }
+        }
+    </script>
+
+</body>
+</html>
